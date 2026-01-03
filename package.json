@@ -1,0 +1,9 @@
+{
+  "name": "mini-course-subscription",
+  "private": true,
+  "scripts": {
+    "install-all": "npm install --prefix backend && npm install --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "start": "node backend/server.js"
+  }
+}
