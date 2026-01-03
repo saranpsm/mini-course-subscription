@@ -27,6 +27,7 @@ export default function Login() {
         : { email, password };
 
       const res = await axios.post(url, payload);
+console.log("API URL =", process.env.REACT_APP_API_URL);
 
       if (!isSignup) {
         localStorage.setItem("token", res.data.token);
@@ -39,6 +40,7 @@ export default function Login() {
         setPassword("");
       }
     } catch (err) {
+      console.log("API URL =", process.env.REACT_APP_API_URL);
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
