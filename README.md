@@ -123,7 +123,9 @@ BFSALE25	50% OFF
 
 some of to improve in this website like the store the token in the session storage
 
-
-
-
 📸 Screenshots
+
+<img width="1362" height="627" alt="Capture" src="https://github.com/user-attachments/assets/65de8802-9067-4d41-bd69-28bbcaae0ede" />
+<img width="1246" height="597" alt="Capture1" src="https://github.com/user-attachments/assets/3cda6e55-0984-468e-97c3-771cb619acab" />
+
+
