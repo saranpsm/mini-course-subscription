@@ -41,28 +41,35 @@ export default function CourseDetail() {
       setMessage("Invalid promo code ❌");
     }
   };
+ const subscribe= async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-  const subscribe = () => {
-    axios
-      .post(
-        `${API}/subscribe`,
-        {
-          courseId: course._id,
-          pricePaid: finalPrice,
-          promoCode
+    if (!token) {
+      alert("Please login first");
+      return;
+    }
+
+    await axios.post(
+      `${API}/subscribe`,
+      {
+        courseId: course._id,
+        promoCode: promoCode || ""
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        }
-      )
-      .then(() => {
-        showToast("Subscribed successfully ✅", "success");
-        setTimeout(() => navigate("/my-courses"), 1500);
-      })
-      .catch(() => showToast("Subscription failed ❌", "error"));
-  };
+      }
+    );
+
+    alert("Subscribed successfully 🎉");
+  } catch (err) {
+    console.error(err);
+    alert(err.response?.data?.message || "Subscription failed");
+  }
+};
+ 
 
   if (!course) {
     return (
