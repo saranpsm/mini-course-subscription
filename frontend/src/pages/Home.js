@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 const API = process.env.REACT_APP_API_URL;
+
 export default function Home() {
   const [courses, setCourses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);
@@ -25,15 +27,11 @@ export default function Home() {
   }, []);
 
   const handleFilter = (type) => {
-    let filtered = allCourses;
+    let filtered = [...allCourses];
 
-    if (type === "free") {
-      filtered = filtered.filter(c => c.price === 0);
-    } else if (type === "paid") {
-      filtered = filtered.filter(c => c.price > 0);
-    }
+    if (type === "free") filtered = filtered.filter(c => c.price === 0);
+    if (type === "paid") filtered = filtered.filter(c => c.price > 0);
 
-    // apply search on filtered data
     if (search) {
       filtered = filtered.filter(c =>
         c.title.toLowerCase().includes(search.toLowerCase())
@@ -45,11 +43,9 @@ export default function Home() {
 
   const handleSearch = (value) => {
     setSearch(value);
-
-    let filtered = allCourses.filter(c =>
+    const filtered = allCourses.filter(c =>
       c.title.toLowerCase().includes(value.toLowerCase())
     );
-
     setCourses(filtered);
   };
 
@@ -59,46 +55,50 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      
-      {/* Navbar */}
-      <div className="bg-white shadow p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-blue-600">
-          Course Platform
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
 
-        <div className="space-x-4">
-          <Link to="/my-courses" className="text-blue-600 font-semibold">
-            My Courses
-          </Link>
+      {/* ================= NAVBAR ================= */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur shadow">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
 
-          <button
-            onClick={logout}
-            className="bg-red-500 text-white px-4 py-1 rounded"
-          >
-            Logout
-          </button>
+          <h1 className="text-xl md:text-2xl font-bold text-blue-600">
+            📚 Course Platform
+          </h1>
+
+          <div className="flex items-center gap-3">
+            <Link
+              to="/my-courses"
+              className="hidden sm:block text-blue-600 font-semibold hover:underline"
+            >
+              My Courses
+            </Link>
+
+            <button
+              onClick={logout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-full text-sm transition"
+            >
+              Logout
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Content */}
-      <div className="p-6 max-w-7xl mx-auto">
+      {/* ================= CONTENT ================= */}
+      <main className="p-4 md:p-6 max-w-7xl mx-auto">
 
         {/* Search + Filter */}
-        <div className="mb-6 flex flex-col sm:flex-row gap-4">
-          
-          {/* Search Bar */}
+        <div className="mb-6 flex flex-col md:flex-row gap-4 items-center">
+
           <input
             type="text"
-            placeholder="Search courses..."
+            placeholder="🔍 Search courses..."
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            className="border p-2 rounded w-full sm:w-1/2"
+            className="w-full md:w-1/2 border p-3 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
           />
 
-          {/* Filter */}
           <select
-            className="border p-2 rounded w-full sm:w-1/4"
+            className="w-full md:w-1/4 border p-3 rounded-xl focus:ring-2 focus:ring-blue-400"
             onChange={(e) => handleFilter(e.target.value)}
           >
             <option value="all">All Courses</option>
@@ -109,27 +109,34 @@ export default function Home() {
 
         {/* Loading */}
         {loading && (
-          <div className="text-center text-xl mt-10">
-            Loading courses...
+          <div className="flex justify-center items-center mt-20 text-xl">
+            ⏳ Loading courses...
           </div>
         )}
 
         {/* Course Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {!loading && courses.map(course => (
             <Link
               key={course._id}
               to={`/course/${course._id}`}
-              className="bg-white rounded-xl shadow hover:shadow-xl transition transform hover:-translate-y-1"
+              className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition transform hover:-translate-y-1 overflow-hidden"
             >
-              <img
-                src={course.image}
-                alt={course.title}
-                className="w-full h-44 object-cover rounded-t-xl"
-              />
+              <div className="relative">
+                <img
+                  src={course.image}
+                  alt={course.title}
+                  className="w-full h-44 object-cover group-hover:scale-105 transition duration-300"
+                />
+
+                <span className={`absolute top-3 right-3 px-3 py-1 text-sm rounded-full text-white
+                  ${course.price === 0 ? "bg-green-500" : "bg-blue-500"}`}>
+                  {course.price === 0 ? "FREE" : `₹${course.price}`}
+                </span>
+              </div>
 
               <div className="p-4">
-                <h2 className="font-bold text-lg mb-1">
+                <h2 className="font-bold text-lg mb-1 line-clamp-1">
                   {course.title}
                 </h2>
 
@@ -137,17 +144,12 @@ export default function Home() {
                   {course.description}
                 </p>
 
-                <div className="mt-3 flex justify-between items-center">
-                  <span className={`font-bold ${
-                    course.price === 0
-                      ? "text-green-600"
-                      : "text-blue-600"
-                  }`}>
-                    {course.price === 0 ? "FREE" : `₹${course.price}`}
+                <div className="mt-4 flex justify-between items-center">
+                  <span className="text-blue-600 font-semibold">
+                    View Details
                   </span>
-
-                  <span className="text-sm text-gray-400">
-                    View →
+                  <span className="text-gray-400 group-hover:translate-x-1 transition">
+                    →
                   </span>
                 </div>
               </div>
@@ -155,13 +157,13 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Empty State */}
+        {/* Empty */}
         {!loading && courses.length === 0 && (
-          <p className="text-center text-gray-500 mt-10">
-            No courses found
+          <p className="text-center text-gray-500 mt-16 text-lg">
+            😕 No courses found
           </p>
         )}
-      </div>
+      </main>
     </div>
   );
 }
