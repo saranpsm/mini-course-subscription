@@ -23,7 +23,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Route middleware
 app.use("/auth", authRoutes);
 app.use("/courses", courseRoutes);
-app.use("/subscribe", subscribeRoutes);
+app.use("/", subscribeRoutes);
 // app.use("/my-courses", myCoursesRoutes); // ✅ Added
 
 // Optional: Serve React build in production
